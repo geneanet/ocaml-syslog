@@ -161,11 +161,10 @@ let openlog
     open_connection loginfo;
     loginfo
 
-let log_console msg = ()
+let log_console _msg = ()
 
 let ascdate {tm_sec=sec;tm_min=min;tm_hour=hour;
-	     tm_mday=mday;tm_mon=mon;tm_year=year;
-	     tm_wday=wday;tm_yday=yday;tm_isdst=isdst} =
+	     tm_mday=mday;tm_mon=mon;_} =
   let asc_mon =
     match mon with
 	0 -> "Jan"
@@ -207,7 +206,7 @@ let syslog ?fac loginfo lev str =
     | None -> loginfo.fac in
   let levfac = Int32.logor realfac (level_to_num lev)
   and now = ascdate (localtime (Unix.time ())) in
-    Printf.bprintf msg "<%ld>%.15s " levfac now;
+    Printf.bprintf msg "<%ld>%s " levfac now;
     let len1 = Buffer.length msg
     and len2 = String.length loginfo.tag in
       if len1 + len2 < 64 then
