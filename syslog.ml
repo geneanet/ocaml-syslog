@@ -181,7 +181,7 @@ let ascdate {tm_sec=sec;tm_min=min;tm_hour=hour;
       | 11 -> "Dec"
       | _ -> raise (Syslog_error "invalid month")
   in
-    (Printf.sprintf "%s %02d %02d:%02d:%02d" asc_mon mday hour min sec)
+    (Printf.sprintf "%s %2d %02d:%02d:%02d" asc_mon mday hour min sec)
 
 let protected_write loginfo str =
   let fallback _ =
