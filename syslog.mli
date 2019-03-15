@@ -5,12 +5,12 @@
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
    version 2.1 of the License, or (at your option) any later version.
-	 
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
-	 
+
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -25,12 +25,12 @@
 (** The assorted logging facilities. The default is [`LOG_USER]. You
     can set a new default with openlog, or give a specific facility per
     syslog call. *)
-type facility = 
+type facility =
     [ `LOG_KERN | `LOG_USER | `LOG_MAIL | `LOG_DAEMON | `LOG_AUTH
     | `LOG_SYSLOG | `LOG_LPR | `LOG_NEWS | `LOG_UUCP | `LOG_CRON
-    | `LOG_AUTHPRIV | `LOG_FTP | `LOG_NTP | `LOG_SECURITY 
-    | `LOG_CONSOLE | `LOG_LOCAL0 | `LOG_LOCAL1 | `LOG_LOCAL2 
-    | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6 
+    | `LOG_AUTHPRIV | `LOG_FTP | `LOG_NTP | `LOG_SECURITY
+    | `LOG_CONSOLE | `LOG_LOCAL0 | `LOG_LOCAL1 | `LOG_LOCAL2
+    | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6
     | `LOG_LOCAL7 ]
 
 (** Flags to pass to openlog. [`LOG_CONS] isn't implemented

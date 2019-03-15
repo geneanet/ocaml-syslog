@@ -10,12 +10,12 @@
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
    version 2.1 of the License, or (at your option) any later version.
-	 
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
-	 
+
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -26,12 +26,12 @@ open Unix
 (** The assorted logging facilities. The default is [`LOG_USER]. You
     can set a new default with openlog, or give a specific facility per
     syslog call. *)
-type facility = 
+type facility =
     [ `LOG_KERN | `LOG_USER | `LOG_MAIL | `LOG_DAEMON | `LOG_AUTH
     | `LOG_SYSLOG | `LOG_LPR | `LOG_NEWS | `LOG_UUCP | `LOG_CRON
-    | `LOG_AUTHPRIV | `LOG_FTP | `LOG_NTP | `LOG_SECURITY 
-    | `LOG_CONSOLE | `LOG_LOCAL0 | `LOG_LOCAL1 | `LOG_LOCAL2 
-    | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6 
+    | `LOG_AUTHPRIV | `LOG_FTP | `LOG_NTP | `LOG_SECURITY
+    | `LOG_CONSOLE | `LOG_LOCAL0 | `LOG_LOCAL1 | `LOG_LOCAL2
+    | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6
     | `LOG_LOCAL7 ]
 
 (** Flags to pass to openlog. [`LOG_CONS] isn't implemented yet. *)
@@ -43,7 +43,7 @@ type level = [ `LOG_EMERG | `LOG_ALERT | `LOG_CRIT | `LOG_ERR | `LOG_WARNING
 
 exception Syslog_error of string
 
-let facility_of_string s = 
+let facility_of_string s =
   match String.lowercase s with
       "kern" -> `LOG_KERN
     | "user" -> `LOG_USER
@@ -70,7 +70,7 @@ let facility_of_string s =
     | "local7" -> `LOG_LOCAL7
     | invalid -> raise
 	(Syslog_error
-	   ("facility_of_string: invalid facility, " ^ 
+	   ("facility_of_string: invalid facility, " ^
 	      invalid))
 
 let facility_to_num fac =
@@ -99,7 +99,7 @@ let facility_to_num fac =
 		  | `LOG_LOCAL6 -> 22 lsl 3
 		  | `LOG_LOCAL7 -> 23 lsl 3)
 
-let level_to_num lev = 
+let level_to_num lev =
   Int32.of_int (match lev with
 		  | `LOG_EMERG -> 0
 		  | `LOG_ALERT -> 1
@@ -121,14 +121,14 @@ type t = {
   mutable tag: string;
   mutable fac: int32;
   mutable logpath: string;
-}  
+}
 
 let open_connection loginfo =
   match loginfo.logpath with
       "" -> raise (Syslog_error "unable to find the syslog socket or pipe, is syslogd running?")
-    | logpath -> 
+    | logpath ->
 	(match (Unix.stat logpath).Unix.st_kind with
-	     Unix.S_SOCK -> 
+	     Unix.S_SOCK ->
 	       let logaddr = Unix.ADDR_UNIX logpath in
 	         (try
 		    loginfo.fd <- Unix.socket Unix.PF_UNIX SOCK_DGRAM 0;
@@ -138,26 +138,26 @@ let open_connection loginfo =
 		    loginfo.fd <- Unix.socket Unix.PF_UNIX SOCK_STREAM 0;
 		    Unix.connect loginfo.fd logaddr);
 		 loginfo.connected <- true;
-	   | Unix.S_FIFO -> 	
+	   | Unix.S_FIFO ->
 	       loginfo.fd <- Unix.openfile logpath [Unix.O_WRONLY] 0o666;
 	       loginfo.connected <- true;
 	   | _ -> raise (Syslog_error "invalid log path, not a socket or pipe"))
 
-let openlog 
-    ?(logpath=(try ignore (Unix.stat "/dev/log");"/dev/log" 
-	       with Unix.Unix_error (Unix.ENOENT, _, _) -> 
+let openlog
+    ?(logpath=(try ignore (Unix.stat "/dev/log");"/dev/log"
+	       with Unix.Unix_error (Unix.ENOENT, _, _) ->
 		 (try ignore (Unix.stat "/var/run/syslog");"/var/run/syslog"
 		  with Unix.Unix_error (Unix.ENOENT, _, _) -> "")))
     ?(facility=`LOG_USER)
     ?(flags=[])
     ident =
-  let loginfo = {fd = Unix.stderr; 
-		 connected = false; 
-		 flags = flags; 
-		 tag = ident; 				    
+  let loginfo = {fd = Unix.stderr;
+		 connected = false;
+		 flags = flags;
+		 tag = ident;
 		 fac = facility_to_num facility;
 		 logpath = logpath}
-  in	        
+  in
     open_connection loginfo;
     loginfo
 
@@ -202,13 +202,13 @@ let protected_write loginfo str =
 
 let syslog ?fac loginfo lev str =
   let msg = Buffer.create 64 in
-  let realfac = match fac with 
+  let realfac = match fac with
     | Some f -> facility_to_num f
     | None -> loginfo.fac in
   let levfac = Int32.logor realfac (level_to_num lev)
   and now = ascdate (localtime (Unix.time ())) in
     Printf.bprintf msg "<%ld>%.15s " levfac now;
-    let len1 = Buffer.length msg 
+    let len1 = Buffer.length msg
     and len2 = String.length loginfo.tag in
       if len1 + len2 < 64 then
 	Buffer.add_string msg loginfo.tag
