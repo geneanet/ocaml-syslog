@@ -1,0 +1,2 @@
+1.2: imported changes from Eric Cooper at CMU which allows us to talk to syslog-ng when it is using a socket stream.
+
