@@ -1,16 +1,22 @@
--include Makefile.conf
 
-SOURCES=syslog.mli syslog.ml
-RESULT=syslog
-PACKS=unix
+default: build
 
-LIBINSTALL_FILES=$(wildcard *.mli *.cmi *.cma *.cmx *.cmxa *.a *.so)
+.PHONY: build syslog.install install uninstall doc clean
 
-all: byte-code-library
-opt: native-code-library
-reallyall: byte-code-library native-code-library
-install: libinstall
-uninstall: libuninstall
-doc: htdoc
+build:
+	dune build
 
--include OCamlMakefile
+syslog.install:
+	dune build @install
+
+install: syslog.install
+	dune install syslog
+
+uninstall: syslog.install
+	dune uninstall syslog
+
+doc:
+	dune build @doc
+
+clean:
+	dune clean
