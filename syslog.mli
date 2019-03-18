@@ -46,18 +46,19 @@ type t
 
 (** given a string descibing a facility, return the facility. The
     strings consist of the name of the facility with the LOG_ chopped
-    off. They are not case sensitive. @raise Syslog_error when given
-    an invalid facility *)
+    off. They are not case sensitive.
+    @raise Syslog_error when given an invalid facility *)
 val facility_of_string: string -> facility
 
 (** openlog ?(logpath=AUTODETECTED) ?(facility=`LOG_USER) ?(flags=[])
-    program_name, similar to openlog(3) @raise Syslog_error on
-    error *)
+    program_name, similar to openlog(3)
+    @raise Syslog_error on error *)
 val openlog: ?logpath:string -> ?facility:facility -> ?flags:flag list -> string -> t
 
-(** Same as syslog(3), except there's no formats. @raise Syslog_error
-    on error (very rare) *)
+(** Same as syslog(3), except there's no formats.
+    @raise Syslog_error on error (very rare) *)
 val syslog: ?fac:facility -> t -> level -> string -> unit
 
-(** Close the log. @raise Syslog_error on error *)
+(** Close the log.
+    @raise Syslog_error on error *)
 val closelog: t -> unit
