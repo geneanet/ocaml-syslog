@@ -111,9 +111,6 @@ let level_to_num lev =
 		  | `LOG_DEBUG -> 7)
 
 
-let level_mask = 0x07
-let facility_mask = 0x03f8
-
 type t = {
   mutable fd: Unix.file_descr;
   mutable connected: bool;
