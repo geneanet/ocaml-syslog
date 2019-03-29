@@ -19,6 +19,6 @@ remove: [ [ "ocamlfind" "remove" "syslog" ] ]
 flags: light-uninstall
 
 depends: [
+  "dune"
   "ocaml" {>= "4.03.0"}
-  "ocamlfind"
 ]
