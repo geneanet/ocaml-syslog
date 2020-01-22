@@ -15,7 +15,20 @@ bug-reports: "https://github.com/geneanet/ocaml-syslog/issues"
 
 license: "LGPL"
 
-build: [ "dune" "build" ]
+build: [
+  ["dune" "subst"] {pinned}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+]
 
 depends: [
   "dune" { build }
