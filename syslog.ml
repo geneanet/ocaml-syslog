@@ -1,4 +1,5 @@
-(* syslog(3) routines for ocaml
+(* syslog(3) routines for ocaml (RFC 3164)
+
    This library is based on Shawn Wagner's original syslog
    library as included in annexlib, with significant modifications
    by by Eric Stokes <eric.stokes@csun.edu>.
