@@ -26,12 +26,12 @@
     can set a new default with openlog, or give a specific facility per
     syslog call. *)
 type facility =
-    [ `LOG_KERN | `LOG_USER | `LOG_MAIL | `LOG_DAEMON | `LOG_AUTH
-    | `LOG_SYSLOG | `LOG_LPR | `LOG_NEWS | `LOG_UUCP | `LOG_CRON
-    | `LOG_AUTHPRIV | `LOG_FTP | `LOG_NTP | `LOG_SECURITY
-    | `LOG_CONSOLE | `LOG_LOCAL0 | `LOG_LOCAL1 | `LOG_LOCAL2
-    | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6
-    | `LOG_LOCAL7 ]
+  [ `LOG_KERN | `LOG_USER | `LOG_MAIL | `LOG_DAEMON | `LOG_AUTH
+  | `LOG_SYSLOG | `LOG_LPR | `LOG_NEWS | `LOG_UUCP | `LOG_CRON
+  | `LOG_AUTHPRIV | `LOG_FTP | `LOG_NTP | `LOG_SECURITY
+  | `LOG_CONSOLE | `LOG_LOCAL0 | `LOG_LOCAL1 | `LOG_LOCAL2
+  | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6
+  | `LOG_LOCAL7 ]
 
 (** Flags to pass to openlog. [`LOG_CONS] isn't implemented
     yet. LOG_NDELAY is mandatory and implied *)
