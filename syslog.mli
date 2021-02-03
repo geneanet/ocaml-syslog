@@ -33,8 +33,7 @@ type facility =
   | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6
   | `LOG_LOCAL7 ]
 
-(** Flags to pass to openlog. [`LOG_CONS] isn't implemented
-    yet. LOG_NDELAY is mandatory and implied *)
+(** Flags to pass to openlog. LOG_NDELAY is mandatory and implied *)
 type flag = [ `LOG_CONS | `LOG_PERROR | `LOG_PID ]
 
 (** The priority of the error. *)

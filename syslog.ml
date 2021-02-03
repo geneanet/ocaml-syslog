@@ -149,7 +149,11 @@ let openlog
   open_connection loginfo;
   loginfo
 
-let log_console _msg = ()
+let log_fd fd msg =
+  try
+    ignore (Unix.write fd msg 0 (Bytes.length msg));
+    ignore (Unix.write fd (Bytes.unsafe_of_string "\n") 0 1)
+  with _ -> ()
 
 let ascdate {tm_sec=sec;tm_min=min;tm_hour=hour;
 	     tm_mday=mday;tm_mon=mon;_} =
@@ -176,7 +180,7 @@ let protected_write loginfo str =
     (try close loginfo.fd with _ -> ());
     loginfo.connected <- false;
     (try open_connection loginfo with _ -> ());
-    if List.mem `LOG_CONS loginfo.flags then log_console str
+    if List.mem `LOG_CONS loginfo.flags then log_fd Unix.stdout str
   in
   let prev = Sys.signal Sys.sigpipe (Sys.Signal_handle fallback) in
   try
@@ -212,12 +216,7 @@ let syslog ?fac loginfo lev str =
     Bytes.blit_string "<truncated>" 0 !realmsg 1012 11
   end;
   protected_write loginfo !realmsg;
-  if List.mem `LOG_PERROR loginfo.flags then begin
-    try
-      ignore (Unix.write Unix.stderr !realmsg 0 (Bytes.length !realmsg));
-      ignore (Unix.write Unix.stderr (Bytes.unsafe_of_string "\n") 0 1)
-    with _ -> ()
-  end
+  if List.mem `LOG_PERROR loginfo.flags then log_fd Unix.stderr !realmsg
 
 let closelog loginfo =
   if loginfo.connected then
