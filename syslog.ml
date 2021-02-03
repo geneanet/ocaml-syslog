@@ -23,9 +23,6 @@
 
 open Unix
 
-(** The assorted logging facilities. The default is [`LOG_USER]. You
-    can set a new default with openlog, or give a specific facility per
-    syslog call. *)
 type facility =
   [ `LOG_KERN | `LOG_USER | `LOG_MAIL | `LOG_DAEMON | `LOG_AUTH
   | `LOG_SYSLOG | `LOG_LPR | `LOG_NEWS | `LOG_UUCP | `LOG_CRON
@@ -34,10 +31,8 @@ type facility =
   | `LOG_LOCAL3 | `LOG_LOCAL4 | `LOG_LOCAL5 | `LOG_LOCAL6
   | `LOG_LOCAL7 ]
 
-(** Flags to pass to openlog. [`LOG_CONS] isn't implemented yet. *)
 type flag = [ `LOG_CONS | `LOG_PERROR | `LOG_PID ]
 
-(** The priority of the error. *)
 type level = [ `LOG_EMERG | `LOG_ALERT | `LOG_CRIT | `LOG_ERR | `LOG_WARNING
 	     | `LOG_NOTICE | `LOG_INFO | `LOG_DEBUG ]
 
