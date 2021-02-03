@@ -118,13 +118,13 @@ let open_connection loginfo =
     match (Unix.stat logpath).Unix.st_kind with
     | Unix.S_SOCK ->
       let logaddr = Unix.ADDR_UNIX logpath in
-      (try
-	 loginfo.fd <- Unix.socket Unix.PF_UNIX SOCK_DGRAM 0;
-	 Unix.connect loginfo.fd logaddr
-       with Unix.Unix_error (Unix.EPROTOTYPE, _, _) ->
-	 (* try again with a stream socket for syslog-ng *)
-	 loginfo.fd <- Unix.socket Unix.PF_UNIX SOCK_STREAM 0;
-	 Unix.connect loginfo.fd logaddr);
+      loginfo.fd <-
+        begin
+          try Unix.socket Unix.PF_UNIX SOCK_DGRAM 0
+          with Unix.Unix_error (Unix.EPROTOTYPE, _, _) ->
+            Unix.socket Unix.PF_UNIX SOCK_STREAM 0
+        end ;
+      Unix.connect loginfo.fd logaddr ;
       loginfo.connected <- true;
     | Unix.S_FIFO ->
       loginfo.fd <- Unix.openfile logpath [Unix.O_WRONLY] 0o666;
@@ -142,7 +142,9 @@ let openlog
   let loginfo = {fd = Unix.stderr;
 		 connected = false;
 		 flags = flags;
-		 tag = ident;
+		 tag = (if String.length ident > 32
+                        then String.sub ident 0 32
+                        else ident);
 		 fac = facility_to_num facility;
 		 logpath = logpath}
   in
@@ -199,24 +201,22 @@ let syslog ?fac loginfo lev str =
   let levfac = Int32.logor realfac (level_to_num lev)
   and now = ascdate (localtime (Unix.time ())) in
   Printf.bprintf msg "<%ld>%s " levfac now;
-  let len1 = Buffer.length msg
-  and len2 = String.length loginfo.tag in
-  if len1 + len2 < 64 then
-    Buffer.add_string msg loginfo.tag
-  else
-    Buffer.add_substring msg loginfo.tag 0 (64 - len1);
+  Buffer.add_string msg loginfo.tag ;
   if List.mem `LOG_PID loginfo.flags then
     Printf.bprintf msg "[%d]" (Unix.getpid());
   if String.length loginfo.tag > 0 then
     Buffer.add_string msg ": ";
   Buffer.add_string msg str;
-  let realmsg = ref (Buffer.to_bytes msg) in
-  if Bytes.length !realmsg > 1024 then begin
-    realmsg := Bytes.sub !realmsg 0 1024;
-    Bytes.blit_string "<truncated>" 0 !realmsg 1012 11
-  end;
-  protected_write loginfo !realmsg;
-  if List.mem `LOG_PERROR loginfo.flags then log_fd Unix.stderr !realmsg
+  let msg =
+    if Buffer.length msg > 1024
+    then begin
+      let m = Bytes.unsafe_of_string @@ Buffer.sub msg 0 1024 in
+      Bytes.blit_string "..." 0 m 1021 3 ;
+      m
+    end else Buffer.to_bytes msg
+  in
+  protected_write loginfo msg;
+  if List.mem `LOG_PERROR loginfo.flags then log_fd Unix.stderr msg
 
 let closelog loginfo =
   if loginfo.connected then

@@ -1,4 +1,4 @@
-(* syslog(3) routines for ocaml
+(* syslog(3) routines for ocaml (rfc3164)
    Copyright (C) 2002 Shawn Wagner <raevnos@pennmush.org>
 
    This library is free software; you can redistribute it and/or
@@ -49,8 +49,9 @@ type t
     @raise Syslog_error when given an invalid facility *)
 val facility_of_string: string -> facility
 
-(** openlog ?(logpath=AUTODETECTED) ?(facility=`LOG_USER) ?(flags=[])
-    program_name, similar to openlog(3)
+(** [openlog ?(logpath=AUTODETECTED) ?(facility=`LOG_USER) ?(flags=[]) tag]
+    Similar to openlog(3).
+    You MUST define [tag] as 32 ABNF alphanumeric characters maximum.
     @raise Syslog_error on error *)
 val openlog: ?logpath:string -> ?facility:facility -> ?flags:flag list -> string -> t
 
