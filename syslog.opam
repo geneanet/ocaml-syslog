@@ -2,9 +2,9 @@ opam-version: "2.0"
 
 name: "syslog"
 
-version: "2.0.1"
+version: "2.0.2"
 
-synopsis: "syslog(3) routines for ocaml"
+synopsis: "syslog(3) routines for ocaml (RFC 3164)"
 
 authors: [
   "Shawn Wagner"
@@ -17,7 +17,7 @@ homepage: "http://github.com/geneanet/ocaml-syslog"
 dev-repo: "git://github.com/geneanet/ocaml-syslog"
 bug-reports: "https://github.com/geneanet/ocaml-syslog/issues"
 
-license: "LGPL-2.0-or-later"
+license: "LGPL-2.1-or-later"
 
 build: [
   ["dune" "subst"] {pinned}
